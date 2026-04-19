@@ -52,14 +52,14 @@ echo "<script>alert('Invalid Details');</script>";
 
 </head>
 
-<body class="bg-dark" style=" background-image: url('images/M.jpg');">
+<body class="bg-dark" style=" background-image: url('images/M.png');">
 
 
     <div class="sufee-login d-flex align-content-center flex-wrap" >
         <div class="container">
             <div class="login-content">
                 <div class="login-logo">
-                    <h3 style="color:black">GECK Teacher Records </h3>
+                    <h3 style="color:black">NUBTK Teacher Records </h3>
                     <hr  color="red"/>
                 </div>
                 <div class="login-form">
