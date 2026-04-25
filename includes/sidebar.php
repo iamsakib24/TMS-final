@@ -5,7 +5,7 @@
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
                     <i class="fa fa-bars"></i>
                 </button> 
-                <a class="navbar-brand" href="dashboard.php">TRMS ADMIN | </a>
+                <a class="navbar-brand" href="dashboard.php">NUBTK ADMIN | </a>
                 
             </div>
 
@@ -30,12 +30,12 @@
                     </li>
 
 <li class="active">
-                        <a href="search.php"> <i class="menu-icon fa fa-search"></i>Search </a>
+                        <a href="search.php"> <i class="menu-icon fa fa-file-o"></i>Salary Management </a>
                     </li>
-  <li class="menu-item-has-children dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-tasks"></i>Reports</a>
-                        <ul class="sub-menu children dropdown-menu">
-                            <li><i class="menu-icon fa fa-file-o"></i><a href="bwdates-report-ds.php">Between Dates Report</a></li>
+
+                    <li class="active">
+                        <a href="bwdates-report-ds.php"><i class="menu-icon fa fa-file-o"></i> Attendance Management</a></li>
+  <
                            
                         </ul>
                     </li>
