@@ -2,120 +2,134 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-error_reporting(0);
+
 if (strlen($_SESSION['trmsaid']==0)) {
   header('location:logout.php');
-  } else{
+} else {
 
 
-  ?>
+// ✅ POST METHOD (Attendance Save)
+if(isset($_POST['submit']))
+{
+    $teacher_id = $_POST['teacher_id'];
+    $date = $_POST['date'];
+    $status = $_POST['status'];
 
+    // Duplicate check
+    $check = "SELECT * FROM tblattendance WHERE teacher_id=:tid AND date=:date";
+    $q = $dbh->prepare($check);
+    $q->bindParam(':tid',$teacher_id,PDO::PARAM_STR);
+    $q->bindParam(':date',$date,PDO::PARAM_STR);
+    $q->execute();
+
+    if($q->rowCount()>0){
+        echo "<script>alert('Attendance already added');</script>";
+    } else {
+
+        $sql="INSERT INTO tblattendance(teacher_id,date,status)
+              VALUES(:tid,:date,:status)";
+        $query=$dbh->prepare($sql);
+        $query->bindParam(':tid',$teacher_id,PDO::PARAM_STR);
+        $query->bindParam(':date',$date,PDO::PARAM_STR);
+        $query->bindParam(':status',$status,PDO::PARAM_STR);
+        $query->execute();
+
+        echo "<script>alert('Attendance Saved Successfully');</script>";
+    }
+}
+?>
 <!doctype html>
 <html class="no-js" lang="en">
 
 <head>
-   
-    <title>TRMS Reports</title>
-   
-
-    <link rel="apple-touch-icon" href="apple-icon.png">
-   
-
+    <title>TRMS Attendance Management</title>
 
     <link rel="stylesheet" href="vendors/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="vendors/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="vendors/themify-icons/css/themify-icons.css">
-    <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
-    <link rel="stylesheet" href="vendors/selectFX/css/cs-skin-elastic.css">
-
     <link rel="stylesheet" href="assets/css/style.css">
-
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
-
-
 </head>
 
 <body>
-    <!-- Left Panel -->
 
-    <?php include_once('includes/sidebar.php');?>
+<?php include_once('includes/sidebar.php');?>
 
-    <div id="right-panel" class="right-panel">
+<div id="right-panel" class="right-panel">
 
-        <!-- Header-->
-        <?php include_once('includes/header.php');?>
+<?php include_once('includes/header.php');?>
 
-        <div class="breadcrumbs">
-            <div class="col-sm-4">
-                <div class="page-header float-left">
-                    <div class="page-title">
-                        <h1>Between Dates Reports</h1>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-8">
-                <div class="page-header float-right">
-                    <div class="page-title">
-                        <ol class="breadcrumb text-right">
-                            <li><a href="dashboard.php">Dashboard</a></li>
-                            <li><a href="bwdates-report-ds.php">Between Dates Reports</a></li>
-                            <li class="active">Reports</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="breadcrumbs">
+    <div class="col-sm-4">
+        <h1>Teacher Attendance</h1>
+    </div>
+</div>
 
-        <div class="content mt-3">
-            <div class="animated fadeIn">
+<div class="content mt-3">
+<div class="animated fadeIn">
+<div class="row">
+<div class="col-lg-12">
 
+<div class="card">
+<div class="card-header">
+    <strong>Teacher Attendance Management</strong>
+</div>
 
-                <div class="row">
-                    <div class="col-lg-6">
-                       <!-- .card -->
+<!-- ✅ Attendance Form -->
+<form method="post">
+<div class="card-body">
 
-                    </div>
-                    <!--/.col-->
+    <div class="form-group">
+        <label>Select Teacher</label>
+        <select name="teacher_id" class="form-control" required>
+            <option value="">Select Teacher</option>
+            <?php
+            $sql="SELECT * FROM tblteacher";
+            $query=$dbh->prepare($sql);
+            $query->execute();
+            $results=$query->fetchAll(PDO::FETCH_OBJ);
+            foreach($results as $row){
+            ?>
+            <option value="<?php echo $row->ID;?>">
+                <?php echo $row->Name;?>
+            </option>
+            <?php } ?>
+        </select>
+    </div>
 
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header"><strong>Between Dates</strong><small> Reports</small></div>
-                            <form name="bwdatesreport"  action="bwdates-reports-details.php" method="post">
-                                <p style="font-size:16px; color:red" align="center"> <?php if($msg){
-    echo $msg;
-  }  ?> </p>
-                            <div class="card-body card-block">
- 
-                                <div class="form-group"><label for="company" class=" form-control-label">From Date</label><input type="date" name="fromdate" id="fromdate" class="form-control" required="true"></div>
-                                    <div class="form-group"><label for="vat" class=" form-control-label">To Date</label><input type="date" name="todate"  class="form-control" required="true"></div>
-                                        
-                                                    </div>
-                                                   <p style="text-align: center;"><button type="submit" class="btn btn-primary btn-sm" name="submit" id="submit">
-                                                            <i class="fa fa-dot-circle-o"></i> Submit
-                                                        </button></p>
-                                                  
-                                                </div>
-                                                </form>
-                                            </div>
+    <div class="form-group">
+        <label>Date</label>
+        <input type="date" name="date" class="form-control" required>
+    </div>
 
+    <div class="form-group">
+        <label>Status</label>
+        <select name="status" class="form-control" required>
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+        </select>
+    </div>
 
+</div>
 
-                                           
-                                            </div>
-                                        </div><!-- .animated -->
-                                    </div><!-- .content -->
-                                </div><!-- /#right-panel -->
-                                <!-- Right Panel -->
+<p style="text-align:center;">
+    <button type="submit" name="submit" class="btn btn-success">
+        Save Attendance
+    </button>
+</p>
+</form>
 
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-                            <script src="vendors/jquery/dist/jquery.min.js"></script>
-                            <script src="vendors/popper.js/dist/umd/popper.min.js"></script>
+</div>
 
-                            <script src="vendors/jquery-validation/dist/jquery.validate.min.js"></script>
-                            <script src="vendors/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+<script src="vendors/jquery/dist/jquery.min.js"></script>
+<script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
 
-                            <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-                            <script src="assets/js/main.js"></script>
 </body>
 </html>
-<?php }  ?>
+<?php } ?>
