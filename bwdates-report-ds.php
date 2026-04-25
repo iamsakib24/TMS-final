@@ -8,7 +8,7 @@ if (strlen($_SESSION['trmsaid']==0)) {
 } else {
 
 
-// ✅ POST METHOD (Attendance Save)
+
 if(isset($_POST['submit']))
 {
     $teacher_id = $_POST['teacher_id'];
