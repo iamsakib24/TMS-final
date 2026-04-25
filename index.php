@@ -4,99 +4,138 @@ error_reporting(0);
 include('includes/dbconnection.php');
 
 if(isset($_POST['login'])) 
-  {
-    $username=$_POST['username'];
-    $password=md5($_POST['password']);
-    $sql ="SELECT ID FROM tbladmin WHERE UserName=:username and Password=:password";
-    $query=$dbh->prepare($sql);
-    $query-> bindParam(':username', $username, PDO::PARAM_STR);
-$query-> bindParam(':password', $password, PDO::PARAM_STR);
-    $query-> execute();
-    $results=$query->fetchAll(PDO::FETCH_OBJ);
-    if($query->rowCount() > 0)
 {
-foreach ($results as $result) {
-$_SESSION['trmsaid']=$result->ID;
-}
-$_SESSION['login']=$_POST['username'];
-echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
-} else{
-echo "<script>alert('Invalid Details');</script>";
-}
-}
+    $username = $_POST['username'];
+    $password = md5($_POST['password']);
 
+    $sql = "SELECT ID FROM tbladmin WHERE UserName=:username and Password=:password";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':username', $username, PDO::PARAM_STR);
+    $query->bindParam(':password', $password, PDO::PARAM_STR);
+    $query->execute();
+
+    $results = $query->fetchAll(PDO::FETCH_OBJ);
+
+    if($query->rowCount() > 0)
+    {
+        foreach ($results as $result) {
+            $_SESSION['trmsaid'] = $result->ID;
+        }
+        $_SESSION['login'] = $_POST['username'];
+        echo "<script>document.location ='dashboard.php';</script>";
+    }
+    else {
+        echo "<script>alert('Invalid Details');</script>";
+    }
+}
 ?>
-    
+
 <!doctype html>
-<html class="no-js" lang="en">
+<html lang="en">
 <head>
-    
-    <title>Admin Login</title>
-    
+<title>Login Page</title>
 
-    <link rel="apple-touch-icon" href="apple-icon.png">
-   
+<link rel="stylesheet" href="vendors/bootstrap/dist/css/bootstrap.min.css">
 
+<style>
+body{
+    height:100vh;
+    margin:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:url('images/M.png');
+    background-size:cover;
+}
 
-    <link rel="stylesheet" href="vendors/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="vendors/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="vendors/themify-icons/css/themify-icons.css">
-    <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
-    <link rel="stylesheet" href="vendors/selectFX/css/cs-skin-elastic.css">
+/* MAIN WRAPPER */
+.login-wrapper{
+    width:900px;
+    display:flex;
+    gap:25px;   /* 👈 LEFT RIGHT GAP */
+}
 
-    <link rel="stylesheet" href="assets/css/style.css">
+/* LEFT BOX */
+.left-box{
+    width:50%;
+    background:rgba(0,0,0,0.65);
+    color:white;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:40px;
+    border-radius:12px;
+    text-align:center;
+}
 
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
-
-
+/* RIGHT BOX */
+.right-box{
+    width:50%;
+    background:white;
+    padding:40px;
+    border-radius:12px;
+    box-shadow:0 0 15px rgba(0,0,0,0.2);
+}
+</style>
 
 </head>
 
-<body class="bg-dark" style=" background-image: url('images/M.png');">
+<body>
 
 
-    <div class="sufee-login d-flex align-content-center flex-wrap" >
-        <div class="container">
-            <div class="login-content">
-                <div class="login-logo">
-                    <h3 style="color:black">NUBTK Teacher Records </h3>
-                    <hr  color="red"/>
-                </div>
-                <div class="login-form">
-                    <form action="" method="post" name="login">
-                        
-                        <div class="form-group">
-                            <label>User Name</label>
-                            <input type="text" class="form-control" placeholder="User Name" required="true" name="username">
-                        </div>
-                            <div class="form-group">
-                                <label>Password</label>
-                                <input type="password" class="form-control" placeholder="Password" name="password" required="true">
-                        </div>
-                                <div class="checkbox">
-                                    <label class="pull-left">
-                                <a href="../index.php">Back Home!!</a>
-                                    <label class="pull-right">
-                                <a href="forgot-password.php" style="padding-left: 250px">Forgot Password?</a>
-                            </label>
+<div class="login-wrapper">
 
-                                </div>
-                                <button type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" name="login">Sign in</button>
-                                
-                            
-                    </form>
-                </div>
+
+
+
+   <div class="left-box">
+    <h3 class="text-center">Teacher Login</h3>
+    <hr>
+    
+    <a href="login.php" class="btn btn-success btn-block" style="padding: 12px; font-size: 16px;">
+        Login here
+    </a>
+
+    <br>
+
+    <a href="register.php" class="btn btn-primary btn-block" style="padding: 12px; font-size: 16px;">
+        Register here
+    </a>
+</div>
+
+  
+
+
+    <div class="right-box">
+        <h3 class="text-center">Admin Login</h3>
+        <hr>
+
+        <form method="post">
+
+            <div class="form-group">
+                <label>User Name</label>
+                <input type="text" class="form-control" name="username" required>
             </div>
-        </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" name="password" required>
+            </div>
+
+            <div class="form-group d-flex justify-content-between">
+                
+                <a href="forgot-password.php">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-block" name="login">
+                Sign In
+            </button>
+
+        </form>
     </div>
 
-
-    <script src="vendors/jquery/dist/jquery.min.js"></script>
-    <script src="vendors/popper.js/dist/umd/popper.min.js"></script>
-    <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="assets/js/main.js"></script>
-
+</div>
 
 </body>
-
 </html>
