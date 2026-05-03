@@ -3,209 +3,173 @@ session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
 
-// Salary Save Logic
-if(isset($_POST['submit']))
-{
-    $teacher_id = $_POST['teacher_id'];
-    $salary = $_POST['salary'];
-    $month = $_POST['month'];
-    $year = $_POST['year'];
+if (strlen($_SESSION['trmsaid'] == 0)) {
+    header('location:logout.php');
+} else {
+    // Salary Save Logic
+    if(isset($_POST['submit'])) {
+        $teacher_id = $_POST['teacher_id'];
+        $salary = $_POST['salary'];
+        $month = $_POST['month'];
+        $year = $_POST['year'];
 
-    $checksql = "SELECT * FROM tblsalary WHERE teacher_id=:tid AND month=:month AND year=:year";
-    $checkquery = $dbh->prepare($checksql);
-    $checkquery->bindParam(':tid',$teacher_id,PDO::PARAM_STR);
-    $checkquery->bindParam(':month',$month,PDO::PARAM_STR);
-    $checkquery->bindParam(':year',$year,PDO::PARAM_STR);
-    $checkquery->execute();
+        $checksql = "SELECT * FROM tblsalary WHERE teacher_id=:tid AND month=:month AND year=:year";
+        $checkquery = $dbh->prepare($checksql);
+        $checkquery->bindParam(':tid',$teacher_id,PDO::PARAM_STR);
+        $checkquery->bindParam(':month',$month,PDO::PARAM_STR);
+        $checkquery->bindParam(':year',$year,PDO::PARAM_STR);
+        $checkquery->execute();
 
-    if($checkquery->rowCount() > 0){
-        echo "<script>alert('Salary already added for this month');</script>";
-    } else {
-        $sql = "INSERT INTO tblsalary(teacher_id, salary, month, year) VALUES(:teacher_id, :salary, :month, :year)";
-        $query = $dbh->prepare($sql);
-        $query->bindParam(':teacher_id',$teacher_id,PDO::PARAM_STR);
-        $query->bindParam(':salary',$salary,PDO::PARAM_STR);
-        $query->bindParam(':month',$month,PDO::PARAM_STR);
-        $query->bindParam(':year',$year,PDO::PARAM_STR);
-        $query->execute();
-
-        echo "<script>alert('Salary Added Successfully');</script>";
+        if($checkquery->rowCount() > 0){
+            echo "<script>alert('Salary already added for this month');</script>";
+        } else {
+            $sql = "INSERT INTO tblsalary(teacher_id, salary, month, year) VALUES(:teacher_id, :salary, :month, :year)";
+            $query = $dbh->prepare($sql);
+            $query->bindParam(':teacher_id',$teacher_id,PDO::PARAM_STR);
+            $query->bindParam(':salary',$salary,PDO::PARAM_STR);
+            $query->bindParam(':month',$month,PDO::PARAM_STR);
+            $query->bindParam(':year',$year,PDO::PARAM_STR);
+            $query->execute();
+            echo "<script>alert('Salary Added Successfully');</script>";
+        }
     }
-}
 ?>
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Teacher Salary Management | TRMS</title>
+    <title>Teacher Salary | TRMS</title>
     <link rel="stylesheet" href="vendors/bootstrap/dist/css/bootstrap.min.css">
-    
     <style>
         body { 
             background: #f4f7f6; 
-            font-family: 'Poppins', sans-serif; 
+            font-family: 'Segoe UI', sans-serif; 
             margin: 0;
-            padding: 0;
         }
         
-        /* Container fix to center the content */
-        .main-content {
-            padding: 20px;
-            width: 100%;
+       
+        .wrapper {
             display: flex;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        .card { 
-            border: none; 
-            border-radius: 15px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+        .salary-card {
             background: #fff;
             width: 100%;
-            max-width: 1200px; /* Table er size control korbe */
-            overflow: hidden;
+            max-width: 1000px;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            border: 1px solid #e0e0e0;
         }
 
-        .card-header { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-            padding: 25px; 
+        .salary-card h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
             text-align: center;
-            border: none;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #5c6bc0;
         }
-        .card-header h2 { 
-            font-size: 22px; 
-            font-weight: 700; 
-            color: #fff; 
-            margin: 0;
-            text-transform: uppercase;
-        }
-        
+
+      
+        .table { margin-bottom: 0; }
         .table thead th {
-            background-color: #5c6bc0;
-            color: #ffffff;
+            background-color: #f8f9fa;
+            border-top: none;
+            color: #555;
             font-weight: 600;
-            border: none;
-            padding: 15px;
-            text-align: center;
-        }
-        
-        .table tbody td {
-            vertical-align: middle;
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #eee;
+            text-transform: uppercase;
+            font-size: 13px;
         }
 
         .form-control {
-            border-radius: 8px;
-            padding: 8px;
-            border: 1px solid #ddd;
+            height: 38px;
+            font-size: 14px;
+            border-radius: 4px;
         }
 
-        .btn-save {
-            background: #00b09b;
-            background: linear-gradient(to right, #00b09b, #96c93d);
+        .btn-pay {
+            background-color: #5c6bc0;
+            color: white;
             border: none;
-            padding: 8px 20px;
-            border-radius: 50px;
+            padding: 6px 20px;
             font-weight: 600;
-            color: #fff;
-            transition: 0.3s;
-        }
-        .btn-save:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            width: 100%;
         }
 
-        .teacher-name { font-weight: 700; color: #333; }
-        .subject-badge { 
-            background: #ffeaa7; 
-            color: #d63031; 
-            padding: 2px 10px; 
-            border-radius: 10px; 
-            font-size: 11px; 
-            font-weight: bold;
-        }
+        .btn-pay:hover { background-color: #4a59a7; color: #fff; }
 
-        /* Hiding potential unwanted icons from header.php */
-        .user-area img, .user-avatar { display: none !important; }
+    
+        .user-area, .header-left { display: none !important; }
     </style>
 </head>
-
 <body>
 
-
-<?php include_once('includes/header.php');?>
-
-<div class="main-content">
-    <div class="card">
-        <div class="card-header">
-            <h2>Salary Disbursement Panel</h2>
-        </div>
+<div class="wrapper">
+    <div class="salary-card">
+        <h2>Salary Disbursement Panel</h2>
         
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th>SL</th>
-                            <th style="text-align: left;">Teacher Details</th>
-                            <th>Monthly Salary</th>
-                            <th>Month</th>
-                            <th>Year</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $sql = "SELECT * FROM tblteacher";
-                        $query = $dbh->prepare($sql);
-                        $query->execute();
-                        $results = $query->fetchAll(PDO::FETCH_OBJ);
-
-                        $cnt = 1;
-                        foreach($results as $row) {
-                        ?>
-                        <form method="post">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th width="5%">SL</th>
+                        <th width="30%">Teacher Name</th>
+                        <th width="20%">Amount</th>
+                        <th width="20%">Month/Year</th>
+                        <th width="15%">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $sql = "SELECT * FROM tblteacher";
+                    $query = $dbh->prepare($sql);
+                    $query->execute();
+                    $results = $query->fetchAll(PDO::FETCH_OBJ);
+                    $cnt = 1;
+                    foreach($results as $row) {
+                    ?>
+                    <form method="post">
                         <tr>
                             <td><?php echo $cnt;?></td>
-                            <td style="text-align: left;">
-                                <div class="teacher-name"><?php echo $row->Name;?></div>
-                                <span class="subject-badge"><?php echo $row->TeacherSub;?></span>
+                            <td>
+                                <strong><?php echo $row->Name;?></strong><br>
+                                <small class="text-muted"><?php echo $row->TeacherSub;?></small>
                             </td>
                             <td>
-                                <div class="input-group">
-                                    <input type="number" name="salary" class="form-control" placeholder="Amount" required>
+                                <input type="number" name="salary" class="form-control" placeholder="Salary" required>
+                            </td>
+                            <td>
+                                <div class="d-flex">
+                                    <select name="month" class="form-control mr-1" required>
+                                        <?php
+                                        $months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                                        foreach($months as $m) {
+                                            echo "<option value='$m'".($m == date('M') ? ' selected' : '').">$m</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                    <input type="text" name="year" class="form-control" value="<?php echo date('Y'); ?>" style="width: 70px;" required>
                                 </div>
                             </td>
                             <td>
-                                <select name="month" class="form-control" required>
-                                    <?php
-                                    $months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                                    foreach($months as $m) {
-                                        echo "<option value='$m'".($m == date('F') ? ' selected' : '').">$m</option>";
-                                    }
-                                    ?>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="text" name="year" class="form-control" value="<?php echo date('Y'); ?>" required>
-                            </td>
-                            <td>
                                 <input type="hidden" name="teacher_id" value="<?php echo $row->ID;?>">
-                                <button type="submit" name="submit" class="btn btn-save">PAY</button>
+                                <button type="submit" name="submit" class="btn btn-pay">PAY</button>
                             </td>
                         </tr>
-                        </form>
-                        <?php $cnt++; } ?>
-                    </tbody>
-                </table>
-            </div>
+                    </form>
+                    <?php $cnt++; } ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
-<script src="vendors/jquery/dist/jquery.min.js"></script>
-<script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-
 </body>
 </html>
+<?php } ?>
