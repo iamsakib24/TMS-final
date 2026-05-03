@@ -30,11 +30,11 @@
                     </li>
 
 <li class="active">
-                        <a href="search.php"> <i class="menu-icon fa fa-file-o"></i>Salary Management </a>
+                        <a href="Salary.php"> <i class="menu-icon fa fa-file-o"></i>Salary Management </a>
                     </li>
 
                     <li class="active">
-                        <a href="bwdates-report-ds.php"><i class="menu-icon fa fa-file-o"></i> Attendance Management</a></li>
+                        <a href="Attendance.php"><i class="menu-icon fa fa-file-o"></i> Attendance Management</a></li>
   <
                            
                         </ul>
